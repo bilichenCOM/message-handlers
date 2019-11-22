@@ -3,10 +3,12 @@ package ua.edu.kneu.libraries.handlers.telegram;
 import org.apache.log4j.Logger;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public class TelegramBot extends TelegramLongPollingBot {
 
@@ -16,7 +18,16 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private TelegramDispatcherMessageHandler dispatcher;
 
+    private Predicate<Message> messageFilter;
+
     private final Logger logger = Logger.getLogger(TelegramLongPollingBot.class);
+
+    public TelegramBot(String botUserName, String botToken) {
+        this.botUserName = botUserName;
+        this.botToken = botToken;
+        this.messageFilter = new TelegramMessageDefaultFilterPredicate(botUserName);
+        this.dispatcher = new TelegramDispatcherMessageHandler();
+    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -30,6 +41,14 @@ public class TelegramBot extends TelegramLongPollingBot {
                 }
             }
         }
+    }
+
+    public TelegramDispatcherMessageHandler getDispatcher() {
+        return dispatcher;
+    }
+
+    public void setDispatcherMessageHandler(TelegramDispatcherMessageHandler dispatcherMessageHandler) {
+        dispatcher = dispatcherMessageHandler;
     }
 
     @Override
@@ -48,9 +67,5 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     public void setBotToken(String botToken) {
         this.botToken = botToken;
-    }
-
-    public void setDispatcherMessageHandler(TelegramDispatcherMessageHandler dispatcherMessageHandler) {
-        dispatcher = dispatcherMessageHandler;
     }
 }

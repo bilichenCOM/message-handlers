@@ -1,6 +1,5 @@
 package ua.edu.kneu.libraries.handlers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class CommandMessageHandler<T, R> implements MessageHandler<T, R> {
@@ -9,10 +8,6 @@ public abstract class CommandMessageHandler<T, R> implements MessageHandler<T, R
 
     public CommandMessageHandler(List<String> commands) {
         this.commands = commands;
-    }
-
-    public CommandMessageHandler() {
-        commands = new ArrayList<>();
     }
 
     public void addCommand(String command) {
