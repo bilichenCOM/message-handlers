@@ -32,10 +32,15 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
-            Optional<SendMessage> message = dispatcher.handleMessage(update.getMessage());
-            if (message.isPresent()) {
+            Message msg = update.getMessage();
+            if (!messageFilter.test(msg)) {
+                return;
+            }
+
+            Optional<SendMessage> responseMsg = dispatcher.handleMessage(msg);
+            if (responseMsg.isPresent()) {
                 try {
-                    execute(message.get());
+                    execute(responseMsg.get());
                 } catch (TelegramApiException e) {
                     logger.error("Some problems sending message!");
                 }
